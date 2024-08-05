@@ -15,7 +15,7 @@ include_once 'DbConnector.php';
 include_once 'User.php';
 
 $database = new DBConnector();
-$db = $database-> connect();
+$db = $database->connect();
 
 $user = new User($db);
 
@@ -29,11 +29,18 @@ if(
     $user->password = $data->password;
     $rememberMe = isset($data->remember_me) ? $data->remember_me : false;
 
-    if($user->login($rememberMe)) {
+    $loginResult = $user->login($rememberMe);
+
+    if ($loginResult) {
         http_response_code(200);
-        echo json_encode(array("message" => "Login successful.", "username" => $user->username, "user_type" => $user->user_type));
+        echo json_encode(array(
+            "message" => $loginResult['message'],
+            "user_id" => $loginResult['user_id'],
+            "username" => $loginResult['username'],
+            "user_type" => $loginResult['user_type']
+        ));
     } else {
-        http_response_code(400);
+        http_response_code(401);
         echo json_encode(array("message" => "Login failed."));
     }
 } else {
