@@ -1,50 +1,35 @@
 <?php
 
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+   
     http_response_code(200);
-    exit;
+    exit();
 }
 
-include_once 'DbConnector.php';
-include_once 'User.php';
-
-$database = new DBConnector();
-$db = $database->connect();
-
-$user = new User($db);
+require_once './Main Classes/Customer.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
-if(
-    !empty($data->email) &&
-    !empty($data->password)
-) {
-    $user->email = $data->email;
-    $user->password = $data->password;
-    $rememberMe = isset($data->remember_me) ? $data->remember_me : false;
+$email = filter_var($data->email,FILTER_SANITIZE_EMAIL);
+$password = $data->password;
 
-    $loginResult = $user->login($rememberMe);
+$userLogin = new Customer();
 
-    if ($loginResult) {
-        http_response_code(200);
-        echo json_encode(array(
-            "message" => $loginResult['message'],
-            "user_id" => $loginResult['user_id'],
-            "username" => $loginResult['username'],
-            "user_type" => $loginResult['user_type']
-        ));
-    } else {
-        http_response_code(401);
-        echo json_encode(array("message" => "Login failed."));
-    }
+$signinResult = $userLogin->login($email,$password);
+
+if ($signinResult) {
+    http_response_code(200);
+    echo json_encode(array(
+        "message" => $signinResult['message'],
+        "user_id" => $signinResult['user_id'],
+        "user_type" => $signinResult['user_type']
+    ));
 } else {
-    http_response_code(400);
-    echo json_encode(array("message" => "Incomplete data."));
+    http_response_code(401);
+    echo json_encode(array("message" => "Incorrect email or password."));
 }
 

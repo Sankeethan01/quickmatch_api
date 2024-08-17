@@ -10,24 +10,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-require_once './Main Classes/Provider.php';
+require_once './Main Classes/Booking.php';
 
-if($_GET['action'] === 'getAll'){
+$booking_status = isset($_GET['booking_status']) ? ($_GET['booking_status']) : null;
 
-    $getAllProviders = new Provider();
+$serviceCount = new Booking();
 
-    $result = $getAllProviders->getAllProviders();
+$result = $serviceCount->getSuccessfulServiceCount($booking_status);
 
 if ($result) {
     http_response_code(200);
     echo json_encode($result);
 } else {
     http_response_code(404);
-    echo json_encode(["message" => "providers not found"]);
-}
-
-}
-else{
-    echo json_encode(["message" => "error occured"]);
-    
+    echo json_encode(["message" => "User not found"]);
 }

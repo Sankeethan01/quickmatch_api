@@ -12,22 +12,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 require_once './Main Classes/Provider.php';
 
-if($_GET['action'] === 'getAll'){
+$verify_id = isset($_GET['verify_id']) ? ($_GET['verify_id']) : null;
 
-    $getAllProviders = new Provider();
+if (!$verify_id) {
+    http_response_code(400);
+    echo json_encode(["message" => "verify ID is required"]);
+    exit();
+}
 
-    $result = $getAllProviders->getAllProviders();
+$checkVerify = new Provider();
+
+$result = $checkVerify->checkVerifyId($verify_id);
 
 if ($result) {
-    http_response_code(200);
-    echo json_encode($result);
+    echo json_encode(true);
 } else {
-    http_response_code(404);
-    echo json_encode(["message" => "providers not found"]);
-}
-
-}
-else{
-    echo json_encode(["message" => "error occured"]);
-    
+    echo json_encode(false);
 }

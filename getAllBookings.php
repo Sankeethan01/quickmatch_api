@@ -10,20 +10,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-require_once './Main Classes/Provider.php';
+require_once './Main Classes/Booking.php';
 
 if($_GET['action'] === 'getAll'){
 
-    $getAllProviders = new Provider();
+    $getAllBookings = new Booking();
 
-    $result = $getAllProviders->getAllProviders();
+    $result = $getAllBookings->getAllBookings();
 
 if ($result) {
     http_response_code(200);
     echo json_encode($result);
 } else {
     http_response_code(404);
-    echo json_encode(["message" => "providers not found"]);
+    echo json_encode(["message" => "booking not found"]);
 }
 
 }

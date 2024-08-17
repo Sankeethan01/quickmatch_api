@@ -10,20 +10,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-require_once './Main Classes/Provider.php';
+require_once './Main Classes/Customer.php';
 
 if($_GET['action'] === 'getAll'){
 
-    $getAllProviders = new Provider();
+    $getAllCustomers = new Customer();
 
-    $result = $getAllProviders->getAllProviders();
+    $result = $getAllCustomers->getAllCustomers();
 
 if ($result) {
     http_response_code(200);
     echo json_encode($result);
 } else {
     http_response_code(404);
-    echo json_encode(["message" => "providers not found"]);
+    echo json_encode(["message" => "customer not found"]);
 }
 
 }

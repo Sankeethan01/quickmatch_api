@@ -10,13 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-require_once './Main Classes/Provider.php';
+require_once './Main Classes/Feedback.php';
 
 if($_GET['action'] === 'getAll'){
 
-    $getAllProviders = new Provider();
+    $getAllFeedbacks = new Feedback();
 
-    $result = $getAllProviders->getAllProviders();
+    $result = $getAllFeedbacks->getAllFeedbacks();
 
 if ($result) {
     http_response_code(200);
