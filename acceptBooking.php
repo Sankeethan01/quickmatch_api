@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 require_once './Main Classes/Booking.php';
+require_once './Main Classes/Mail.php';
 
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
@@ -31,8 +32,24 @@ $result = $acceptBookingStatus->changeBookingStatus($booking_id,$booking_status)
 
 if ($result) {
     http_response_code(200);
-    echo json_encode(["success" => true, "message" => "Booking status updated successfully."]);
+    echo json_encode([
+        "success" => true,
+        "message" => "Booking status updated successfully."
+    ]);
+
+    $emails = $acceptBookingStatus->getEmailsByBookingId($booking_id);
+     
+    /*if ($emails) {
+        $mail = new Mail($emails['customer_email'], "Provider accepted your request", "Provider has accepted your booking request. For further details visit the application.");
+        $mail->setHTML(true);
+        $mail->addCC('findquickmatch@gmail.com'); 
+        $mail->send();
+    }*/
+   
 } else {
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => 'Error while updating status']);
+    echo json_encode([
+        "success" => false,
+        "message" => 'Error while updating status'
+    ]);
 }

@@ -20,5 +20,4 @@ class Customer extends User{
             exit;
         }
     }
-
 }

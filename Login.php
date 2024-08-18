@@ -21,15 +21,10 @@ $userLogin = new Customer();
 
 $signinResult = $userLogin->login($email,$password);
 
-if ($signinResult) {
+if ($signinResult['success']) {
     http_response_code(200);
-    echo json_encode(array(
-        "message" => $signinResult['message'],
-        "user_id" => $signinResult['user_id'],
-        "user_type" => $signinResult['user_type']
-    ));
+    echo json_encode($signinResult);
 } else {
-    http_response_code(401);
-    echo json_encode(array("message" => "Incorrect email or password."));
+    echo json_encode($signinResult);
 }
 

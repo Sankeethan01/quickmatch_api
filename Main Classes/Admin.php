@@ -6,4 +6,39 @@ class Admin extends User{
     {
         parent::__construct();
     }
+
+    public function getUserTypeCount()
+{
+    try {
+        $query = "SELECT user_type, COUNT(*) as count 
+                  FROM user 
+                  WHERE user_type != 'admin'
+                  GROUP BY user_type";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        return null;
+    }
+}
+
+public function getTopPerformingServices()
+{
+    try {
+        $query = "SELECT s.service_name, COUNT(*) * 500 as income 
+                  FROM booking b
+                  JOIN service s ON b.service_category_id = s.service_category_id
+                  WHERE b.booking_status != 'Declined-provider'
+                  GROUP BY s.service_name 
+                  ORDER BY income DESC 
+                  LIMIT 5"; 
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        return null;
+    }
+}
+
+
 }

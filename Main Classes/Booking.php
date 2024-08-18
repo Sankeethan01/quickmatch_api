@@ -13,6 +13,9 @@ class Booking
     private $service;
     private $customer_address;
     private $additional_notes;
+
+    private $customer_email;
+    private $provider_email;
     private $pdo;
 
     public function __construct()
@@ -21,7 +24,7 @@ class Booking
         $this->pdo = $db->connect();
     }
 
-    public function createBooking($service_category_id, $customer_name, $provider_Name,$provider_id, $customer_id, $booking_status, $booking_date, $service, $customer_address, $additional_notes)
+    public function createBooking($service_category_id, $customer_name, $provider_Name,$provider_id, $customer_id, $booking_status, $booking_date, $service, $customer_address, $additional_notes,$customer_email,$provider_email)
     {
         $this->service_category_id = $service_category_id;
         $this->customer_name = $customer_name;
@@ -33,9 +36,11 @@ class Booking
         $this->service = $service;
         $this->customer_address = $customer_address;
         $this->additional_notes = $additional_notes;
+        $this->customer_email = $customer_email;
+        $this->provider_email = $provider_email;
         try {
-            $query = "INSERT INTO booking (service_category_id, customer_name, provider_Name, provider_id, customer_id, booking_status, booking_date, service, customer_address, additional_notes) 
-                      VALUES (:service_category_id, :customer_name, :provider_Name, :provider_id, :customer_id, :booking_status, :booking_date, :service, :customer_address, :additional_notes)";
+            $query = "INSERT INTO booking (service_category_id, customer_name, provider_Name, provider_id, customer_id, booking_status, booking_date, service, customer_address, additional_notes,customer_email,provider_email) 
+                      VALUES (:service_category_id, :customer_name, :provider_Name, :provider_id, :customer_id, :booking_status, :booking_date, :service, :customer_address, :additional_notes,:customer_email,:provider_email)";
 
             $stmt = $this->pdo->prepare($query);
 
@@ -49,6 +54,9 @@ class Booking
             $stmt->bindParam(':service',  $this->service);
             $stmt->bindParam(':customer_address',  $this->customer_address);
             $stmt->bindParam(':additional_notes', $this->additional_notes);
+            $stmt->bindParam(':customer_email',  $this->customer_email);
+            $stmt->bindParam(':provider_email', $this->provider_email);
+
 
             if ($stmt->execute()) {
                 return ['success' => true, 'message' => 'booking successful'];
@@ -100,6 +108,7 @@ class Booking
                   s.service_name,
                   b.customer_address,
                   b.customer_name,
+                  b.provider_email,
                   b.provider_name,
                   b.additional_notes,
                   b.provider_id,
@@ -137,6 +146,7 @@ class Booking
                   s.service_name,
                   b.customer_address,
                   b.customer_name,
+                  b.customer_email,
                   b.provider_name,
                   b.additional_notes,
                   b.provider_id,
@@ -242,4 +252,39 @@ class Booking
             exit;
         }
     }
+
+    public function getEmailsByBookingId($booking_id)
+    {
+        $this->booking_id = $booking_id;
+        try {
+            $sql = "SELECT customer_email,provider_email FROM booking WHERE booking_id = :booking_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':booking_id', $this->booking_id);
+            $stmt->execute();
+            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $booking;
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(["message" => "Failed to retrieve booking details. " . $e->getMessage()]);
+            exit;
+        }
+    }
+
+    public function getMonthlyIncome()
+{
+    try {
+        $query = "SELECT DATE_FORMAT(booking_date, '%Y-%m') as month, SUM(500) as income
+                  FROM booking 
+                  WHERE booking_status != 'Declined-provider'
+                  GROUP BY DATE_FORMAT(booking_date, '%Y-%m')
+                  ORDER BY month ASC";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    } catch (PDOException $e) {
+        return null;
+    }
+}
 }

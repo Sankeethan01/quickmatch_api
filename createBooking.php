@@ -28,11 +28,13 @@ $customer_name = isset($data['customer_name']) ? $data['customer_name'] : null;
 $provider_Name = isset($data['provider_Name']) ? $data['provider_Name'] : null;
 $booking_status = isset($data['booking_status']) ? $data['booking_status'] : null;
 $booking_date = isset($data['booking_date']) ? $data['booking_date'] : null;
+$customer_email = isset($data['customer_email']) ? $data['customer_email'] : null;
+$provider_email = isset($data['provider_email']) ? $data['provider_email'] : null;
 $service = isset($data['service']) ? $data['service'] : null;
 $customer_address = isset($data['customer_address']) ? htmlspecialchars(strip_tags($data['customer_address'])) : null;
 $additional_notes = isset($data['additional_notes']) ? htmlspecialchars(strip_tags($data['additional_notes'])) : null;
 
-if (!$service_category_id  || !$provider_id || !$customer_id || !$customer_name || !$provider_Name || !$booking_status || !$booking_date || !$service || !$customer_address ) {
+if (!$service_category_id  || !$provider_id || !$customer_id || !$customer_name || !$provider_Name || !$booking_status || !$booking_date || !$service || !$customer_address || !$customer_email  || !$provider_email) {
     http_response_code(400);
     echo json_encode(["message" => "data are required"]);
     exit();
@@ -40,7 +42,7 @@ if (!$service_category_id  || !$provider_id || !$customer_id || !$customer_name 
 
 $createBooking = new Booking();
 
-$Result = $createBooking->createBooking($service_category_id,$customer_name,$provider_Name,$provider_id,$customer_id,$booking_status,$booking_date,$service,$customer_address,$additional_notes);
+$Result = $createBooking->createBooking($service_category_id,$customer_name,$provider_Name,$provider_id,$customer_id,$booking_status,$booking_date,$service,$customer_address,$additional_notes,$customer_email,$provider_email);
 
 if ($Result) {
     http_response_code(200);

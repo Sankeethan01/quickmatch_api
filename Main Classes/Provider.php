@@ -131,12 +131,14 @@ class Provider extends User
     public function getAllProviders() {
         try {
             $stmt = $this->pdo->prepare("SELECT
+            user.user_id,
             user.name,
             user.username,
             user.email,
             user.phone,
             user.user_type,
             user.address,
+            user.disable_status,
             user.national_id,
             user.profile_image,
             provider.provider_id AS provider_id,
