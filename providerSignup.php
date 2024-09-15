@@ -26,7 +26,7 @@ if (isset($data->verify_id)) {
         $verify_id = $rs['verify_id'];
         $username = $rs['provider_username'];
         $email = $rs['provider_email'];
-        $password = $rs['provider_email'];
+        $password = $rs['provider_password'];
         $service_category_id = $rs['service_category'];
         $services = $rs['services'];
         $name = $rs['provider_name'];
