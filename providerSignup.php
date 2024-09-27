@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 require_once './Main Classes/Verification.php';
 require_once './Main Classes/Provider.php';
+require_once './Main Classes/Mailer.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -38,8 +39,12 @@ if (isset($data->verify_id)) {
         $Result = $providerSignup->registerProvider($username,$email,$password,$name,$address,$verify_id,$service_category_id,$description,$services);
         
         if($Result['success']) {
+            $mailer = new Mailer();
+            $mailer->setInfo($email,'Account Verification','Dear provider, <br> Your Account has been verified by the admin. <br> You can login into the application.<br> Further enquiries : findquickmatch@gmail.com');
+            if($mailer->send()) {
             http_response_code(200);
             echo json_encode(array("success"=>true,"message" => "Provider was successfully verified."));
+        }
         } else {
             http_response_code(400);
             echo json_encode(array("success"=>false,"message" => $Result['message']));

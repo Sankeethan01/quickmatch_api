@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 require_once './Main Classes/Booking.php';
+require_once './Main Classes/Mailer.php';
 
 $input = file_get_contents("php://input");
 $data = json_decode($input, true);
@@ -45,8 +46,12 @@ $createBooking = new Booking();
 $Result = $createBooking->createBooking($service_category_id,$customer_name,$provider_Name,$provider_id,$customer_id,$booking_status,$booking_date,$service,$customer_address,$additional_notes,$customer_email,$provider_email);
 
 if ($Result) {
+    $mailer = new Mailer();
+    $msg='Dear provider, <br> You have one service request from a customer. <br> Customer email address : '.$customer_email.'<br> Visit the application for getting more details.';
+    $mailer->setInfo($provider_email,'Service Request',$msg);
+    if($mailer->send()){
     http_response_code(200);
-    echo json_encode(["success" => true, "message" => "Booking successful."]);
+    echo json_encode(["success" => true, "message" => "Booking successful."]);}
 } else {
     http_response_code(500);
     echo json_encode(["success" => false, "message" => "Unable to write the booking."]);

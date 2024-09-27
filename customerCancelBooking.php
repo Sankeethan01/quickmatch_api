@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 require_once './Main Classes/Booking.php';
+require_once './Main Classes/Mailer.php';
 
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
@@ -30,8 +31,13 @@ $customerCancelBooking = new Booking();
 $result = $customerCancelBooking->changeBookingStatus($booking_id,$booking_status);
 
 if ($result) {
+    $mails = $customerCancelBooking->getEmailsByBookingId($booking_id);
+    $mailer = new Mailer();
+    $msg='Dear Provider, <br> Service request is cancelled by the customer.<br> For further enquiries contact : '.$mails['customer_email'].' or visit the application';
+    $mailer->setInfo($mails['provider_email'],'Cancellation of Service request',$msg);
+    if($mailer->send()){
     http_response_code(200);
-    echo json_encode(["success" => true, "message" => "Booking status updated successfully."]);
+    echo json_encode(["success" => true, "message" => "Booking status updated successfully."]);}
 } else {
     http_response_code(500);
     echo json_encode(["success" => false, "message" => 'Error while updating status']);

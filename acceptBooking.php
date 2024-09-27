@@ -1,5 +1,4 @@
 <?php
-
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -11,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 require_once './Main Classes/Booking.php';
-require_once './Main Classes/Mail.php';
+require_once './Main Classes/Mailer.php';
 
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
@@ -32,19 +31,18 @@ $result = $acceptBookingStatus->changeBookingStatus($booking_id,$booking_status)
 
 if ($result) {
     http_response_code(200);
+    $emails = $acceptBookingStatus->getEmailsByBookingId($booking_id);
+    $mailer = new Mailer();
+    $message = 'Dear Customer, <br> Your service request is accepted by the provider. <br>Now you can develop a conversation with your provider. <br> Provider email address : '. $emails['provider_email'];
+    $mailer->setInfo($emails['customer_email'],'Service Request Accepted',$message);
+    if($mailer->send()){
     echo json_encode([
         "success" => true,
         "message" => "Booking status updated successfully."
-    ]);
+    ]);}
 
-    $emails = $acceptBookingStatus->getEmailsByBookingId($booking_id);
-     
-    /*if ($emails) {
-        $mail = new Mail($emails['customer_email'], "Provider accepted your request", "Provider has accepted your booking request. For further details visit the application.");
-        $mail->setHTML(true);
-        $mail->addCC('findquickmatch@gmail.com'); 
-        $mail->send();
-    }*/
+    
+    
    
 } else {
     http_response_code(500);
