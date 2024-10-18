@@ -30,15 +30,15 @@ if (!$user_id || !$feedback) {
     exit();
 }
 
-$customerWriteFeedback = new Feedback();
+$providerWriteFeedback = new Feedback();
 
-$Result = $customerWriteFeedback->writeFeedback($user_id,$feedback);
+$Result = $providerWriteFeedback->writeFeedback($user_id,$feedback);
 
 if ($Result) {
     http_response_code(200);
-    echo json_encode(["success" => true, "message" => "Feedback was successfully submitted."]);
+    echo json_encode(["success" => true, "message" => "Feedback was successfully stored."]);
 } else {
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Unable to submit the feedback."]);
+    echo json_encode(["success" => false, "message" => "Unable to write the feedback."]);
 }
 

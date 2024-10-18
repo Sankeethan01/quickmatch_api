@@ -36,9 +36,35 @@ abstract class User
         return false;
     }
 
+    public function checkCredentials($email,$username)
+    {
+        $this->email = $email;
+
+        try {
+            $query = "SELECT email,username FROM user WHERE email = :email";
+            $stmt = $this->pdo->prepare($query);
+
+            $stmt->bindParam(":email", $this->email);
+            $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if($result["username"] === $username)
+            {
+                return true;
+            }
+            return false;
+        }
+        return false;
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(["message" => "Failed to verify username and password. " . $e->getMessage()]);
+        }
+    }
+
     public function login($email, $password)
     {
-
+        
         $this->email = $email;
         $this->password = $password;
 
@@ -58,9 +84,9 @@ abstract class User
                 $this->user_id = $user['user_id'];
                 $this->user_type = $user['user_type'];
 
-                return ['user_type' => $this->user_type, 'user_id' => $this->user_id, 'success' => true, 'message' => 'Login Successful.'];
+                return ['user_type' => $this->user_type, 'user_id' => $this->user_id, 'success' => true, 'message' => 'Login Successful...'];
             } else {
-                return false;
+                return ["success"=>false,"message"=>"Incorrect email or password..."];
             }
         } catch (PDOException $e) {
             http_response_code(500);

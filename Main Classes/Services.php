@@ -17,7 +17,7 @@ class Services {
         try {
             $sql = "SELECT u.name, u.user_id, u.address, u.email, u.phone, u.username, u.user_type, 
                              p.description, p.status, p.service_category_id,p.services, p.provider_id, 
-                             u.profile_image, s.service_name 
+                             u.profile_image, p.charge_per_day,p.qualification, s.service_name 
                       FROM user u
                       INNER JOIN provider p ON u.user_id = p.user_id
                       INNER JOIN service s ON s.service_category_id = p.service_category_id

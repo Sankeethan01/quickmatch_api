@@ -24,9 +24,9 @@ $Result = $customerChangePassword->forgotPassword($email,$password);
 
 if($Result) {
     http_response_code(200);
-    echo json_encode(array("message" => "Password was successfully changed."));
+    echo json_encode(array(["success"=>true, "message" => "Password reset successfully..."]));
 } else {
     http_response_code(400);
-    echo json_encode(array("message" => "Unable to change the password."));
+    echo json_encode(array(["success"=>false,"message" => "Unable to reset the password."]));
 }
 
