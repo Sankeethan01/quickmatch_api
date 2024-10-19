@@ -32,3 +32,4 @@ if (isset($_GET['id'])) {
     echo json_encode(["message" => "Verification ID is required."]);
     exit();
 }
+// finised
