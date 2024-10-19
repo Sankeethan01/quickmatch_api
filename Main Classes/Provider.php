@@ -215,7 +215,7 @@ class Provider extends User
         return false;
     }
 }
-
+//check verify method
 public function checkVerifyId($verify_id){
     $this->verify_id = $verify_id;
     try{
