@@ -92,22 +92,7 @@ class Provider extends User
         }
     }
 
-    public function setStatus($provider_id,$status) {
-         $this->provider_id = $provider_id;
-         $this->status = $status;
-         try {
-            $sql = "UPDATE provider SET status = :status WHERE provider_id = :provider_id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(":provider_id", $this->provider_id);
-            $stmt->bindParam(":status", $this->status);
-            $rs = $stmt->execute();
-            return $rs;
-        } catch (PDOException $e) {
-            return false; // Return false on error
-        }
-    }
-
-    public function getProviderDetails($user_id)
+     public function getProviderDetails($user_id)
     {
         try {
             $userDetails = parent::getDetails($user_id);
@@ -126,8 +111,22 @@ class Provider extends User
             return ['error' => 'An error occurred while fetching data: ' . $e->getMessage()];
         }
     }
+    public function setStatus($provider_id,$status) {
+         $this->provider_id = $provider_id;
+         $this->status = $status;
+         try {
+            $sql = "UPDATE provider SET status = :status WHERE provider_id = :provider_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":provider_id", $this->provider_id);
+            $stmt->bindParam(":status", $this->status);
+            $rs = $stmt->execute();
+            return $rs;
+        } catch (PDOException $e) {
+            return false; // Return false on error
+        }
+    }
 
-
+   
     public function getAllProviders() {
         try {
             $stmt = $this->pdo->prepare("SELECT
@@ -197,17 +196,15 @@ class Provider extends User
     {
         $this->email = $email;
         try{
-            $stmt = $this->pdo->prepare("SELECT email FROM USER WHERE email=:email");
+            $stmt = $this->pdo->prepare("SELECT email FROM user WHERE email=:email");
             $stmt->bindParam(':email',$this->email);
+            $stmt->execute();
             
             if ($stmt->rowCount() > 0) {
-                http_response_code(200);
-                return true;
+                return true; // Email exists
             } else {
-                http_response_code(500);
-                return false;
-            
-        }
+                return false; // Email does not exist
+            }
     }
     catch (PDOException $e) {
         http_response_code(500);
@@ -215,7 +212,7 @@ class Provider extends User
         return false;
     }
 }
-
+//check verify method
 public function checkVerifyId($verify_id){
     $this->verify_id = $verify_id;
     try{
@@ -236,6 +233,7 @@ public function checkVerifyId($verify_id){
         return ['message' => "Failed to get verification data: " . $e->getMessage()];
     }
   }
-
+   
+  
 
 }

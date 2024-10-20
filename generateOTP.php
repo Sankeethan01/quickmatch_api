@@ -22,7 +22,7 @@ $username = isset($data['username']) ? $data['username'] : null;
 
 if (!$email || !$username ) {
     http_response_code(400);
-    echo json_encode(["message" => "booking ID is required"]);
+    echo json_encode(["message" => "Email or username is required"]);
     exit();
 }
 
@@ -38,7 +38,7 @@ if ($result) {
     if($mailer->send())
     {
     http_response_code(200);
-    echo json_encode(["success" => true, "message" => "OTP sent to your email.", "otp"=>$otp,]);
+    echo json_encode(["success" => true, "message" => "OTP sent to your email. Check your Email", "otp"=>$otp,]);
     }
 
 } else {

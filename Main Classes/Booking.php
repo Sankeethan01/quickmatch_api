@@ -242,13 +242,13 @@ class Booking
                                           INNER JOIN 
                                           service ON booking.service_category_id = service.service_category_id
                                           ORDER BY 
-                                          booking.booking_id DESC LIMIT 5;");
+                                          booking.booking_id DESC LIMIT 5");
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $users;
         } catch (PDOException $e) {
             http_response_code(500);
-            echo json_encode(["message" => "Failed to fetch last 4 booking." . $e->getMessage()]);
+            echo json_encode(["message" => "Failed to fetch last 5 booking." . $e->getMessage()]);
             exit;
         }
     }
