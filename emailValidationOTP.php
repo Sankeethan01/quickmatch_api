@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit();
 }
 
-require_once './Main Classes/Customer.php';
 require_once './Main Classes/Mailer.php';
 
 $input = file_get_contents('php://input');
@@ -18,30 +17,24 @@ $data = json_decode($input, true);
 
 
 $email = isset($data['email']) ? $data['email'] : null;
-$username = isset($data['username']) ? $data['username'] : null;
 
-if (!$email || !$username ) {
+if (!$email) {
     http_response_code(400);
-    echo json_encode(["message" => "Email or username is required"]);
+    echo json_encode(["message" => "Email is required"]);
     exit();
 }
 
-$checkCredentials = new Customer();
-
-$result = $checkCredentials->checkCredentials($email,$username);
-
-if ($result) {
     $otp = rand(100000, 999999);
     $mailer = new Mailer();
-    $msg='Dear User, <br> Your verification code is :  '.$otp.'<br> Use this 6 digit code to verify and change your password';
+    $msg='Dear User, <br> Your verification code is :  '.$otp.'<br> Use this 6 digit code to verify and Proceed Registration';
     $mailer->setInfo($email,'OTP Verification',$msg);
     if($mailer->send())
     {
     http_response_code(200);
     echo json_encode(["success" => true, "message" => "OTP sent to your email.", "otp"=>$otp,]);
     }
-
-} else {
-    http_response_code(500);
-    echo json_encode(["success" => false, "message" => 'Invalid email or username']);
-}
+    else
+    {
+       http_response_code(500);
+       echo json_encode(["success" => false, "message" => "Error while sending OTP to your email."]);
+    }

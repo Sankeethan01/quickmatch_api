@@ -16,6 +16,11 @@ require_once './Main Classes/Mailer.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
+if ($data === null) {
+    echo json_encode(array("success" => false, "message" => "No data received."));
+    exit();
+}
+
 if (isset($data->verify_id)) {
     $verify_id = $data->verify_id;
 

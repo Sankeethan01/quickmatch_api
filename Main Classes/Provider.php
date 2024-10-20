@@ -197,17 +197,15 @@ class Provider extends User
     {
         $this->email = $email;
         try{
-            $stmt = $this->pdo->prepare("SELECT email FROM USER WHERE email=:email");
+            $stmt = $this->pdo->prepare("SELECT email FROM user WHERE email=:email");
             $stmt->bindParam(':email',$this->email);
+            $stmt->execute();
             
             if ($stmt->rowCount() > 0) {
-                http_response_code(200);
-                return true;
+                return true; // Email exists
             } else {
-                http_response_code(500);
-                return false;
-            
-        }
+                return false; // Email does not exist
+            }
     }
     catch (PDOException $e) {
         http_response_code(500);
@@ -236,6 +234,7 @@ public function checkVerifyId($verify_id){
         return ['message' => "Failed to get verification data: " . $e->getMessage()];
     }
   }
-
+   
+  
 
 }
