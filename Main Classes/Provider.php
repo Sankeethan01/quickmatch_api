@@ -92,22 +92,7 @@ class Provider extends User
         }
     }
 
-    public function setStatus($provider_id,$status) {
-         $this->provider_id = $provider_id;
-         $this->status = $status;
-         try {
-            $sql = "UPDATE provider SET status = :status WHERE provider_id = :provider_id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(":provider_id", $this->provider_id);
-            $stmt->bindParam(":status", $this->status);
-            $rs = $stmt->execute();
-            return $rs;
-        } catch (PDOException $e) {
-            return false; // Return false on error
-        }
-    }
-
-    public function getProviderDetails($user_id)
+     public function getProviderDetails($user_id)
     {
         try {
             $userDetails = parent::getDetails($user_id);
@@ -126,8 +111,22 @@ class Provider extends User
             return ['error' => 'An error occurred while fetching data: ' . $e->getMessage()];
         }
     }
+    public function setStatus($provider_id,$status) {
+         $this->provider_id = $provider_id;
+         $this->status = $status;
+         try {
+            $sql = "UPDATE provider SET status = :status WHERE provider_id = :provider_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":provider_id", $this->provider_id);
+            $stmt->bindParam(":status", $this->status);
+            $rs = $stmt->execute();
+            return $rs;
+        } catch (PDOException $e) {
+            return false; // Return false on error
+        }
+    }
 
-
+   
     public function getAllProviders() {
         try {
             $stmt = $this->pdo->prepare("SELECT
