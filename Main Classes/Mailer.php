@@ -18,8 +18,8 @@ class Mailer {
         $this->mail->isSMTP();
         $this->mail->Host       = 'smtp.gmail.com';
         $this->mail->SMTPAuth   = true;
-        $this->mail->Username   = 'findquickmatch@gmail.com'; // SMTP email
-        $this->mail->Password   = 'blysbwjtaqchyami'; // SMTP password
+        $this->mail->Username   = 'findquickmatch@gmail.co'; // SMTP email
+        $this->mail->Password   = '##################'; // SMTP password
         $this->mail->SMTPSecure = 'ssl';
         $this->mail->Port       = 465;
 
